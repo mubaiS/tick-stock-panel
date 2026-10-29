@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { Clock } from 'lucide-react'
 import type { StockRef } from '@/lib/useLastStock'
 
@@ -24,7 +25,7 @@ export function LastStockChip({
         <span className="text-[11px] font-medium text-secondary group-hover:text-foreground transition-colors max-w-[7em] truncate">
           {stock.name}
         </span>
-        <span className="text-[9px] font-mono text-muted">{stock.symbol}</span>
+        <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[9px] font-mono text-muted">{stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
       </span>
     </button>
   )

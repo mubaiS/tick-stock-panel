@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Clock, X } from 'lucide-react'
@@ -141,7 +142,7 @@ export function TradeKlineModal({ trade, navItems, currentKey, onNavigate, onClo
             <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-sm font-semibold text-foreground">{trade.symbol}</span>
+                  <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-sm font-semibold text-foreground">{trade.symbol}</span><StockSectorTags symbol={trade.symbol} /></span>
                   <span className="truncate text-sm text-foreground">{trade.name || '交易回放'}</span>
                   <span className="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[10px] text-accent">交易回放</span>
 

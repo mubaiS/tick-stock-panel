@@ -21,6 +21,7 @@ export const QK = {
   quoteInterval:  ['quote-interval'] as const,
   overviewMarket: (asOf?: string) => ['overview-market', asOf ?? 'latest'] as const,
   indexQuotes:    ['index-quotes'] as const,
+  stockSectorLabels: (day: string, conceptSource = '') => ['stock-sector-labels', day, conceptSource] as const,
 
   // Watchlist
   watchlist:            ['watchlist'] as const,

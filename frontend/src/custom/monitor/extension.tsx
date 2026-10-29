@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -66,57 +67,6 @@ function renderMessage(source: string, message: string) {
       <span className={direction === '移出' ? 'text-bear font-medium' : 'text-danger font-medium'}>{direction}</span>
       <span className="text-foreground/80">{post}</span>
     </>
-  )
-}
-
-/**
- * 从事件行中取出 ext 字段标签 (行业/概念), 按 item 配置裁剪 (maxTags/hiddenIndices)。
- */
-function getExtTags(ev: Record<string, unknown>, item: MonitorExtFieldItem | null): string[] {
-  if (!item?.field) return []
-  const key = item.field.replace('.', '__')
-  const v = ev[key]
-  if (v == null) return []
-  const str = String(v)
-  if (!str) return []
-  let tags = str.split(/[、,，;；\-]/).map(s => s.trim()).filter(Boolean)
-  const maxTags = item.maxTags ?? 0
-  if (maxTags > 0) tags = tags.slice(0, maxTags)
-  const hidden = item.hiddenIndices
-  if (hidden?.length) tags = tags.filter((_, i) => !hidden.includes(i))
-  return tags
-}
-
-/** 个股通知的 ext 标签行 (行业/概念), 无数据返回 null */
-function AlertExtTags({ ev, fields, onTagClick }: {
-  ev: Record<string, unknown>
-  fields: { concept: MonitorExtFieldItem | null; industry: MonitorExtFieldItem | null }
-  onTagClick: (kind: DimensionKind, value: string, sourceField?: string) => void
-}) {
-  const conceptTags = getExtTags(ev, fields.concept)
-  const industryTags = getExtTags(ev, fields.industry)
-  if (conceptTags.length === 0 && industryTags.length === 0) return null
-  return (
-    <div className="mt-1 flex flex-wrap items-center gap-1 pl-0.5">
-      {industryTags.map((t, i) => (
-        <button
-          key={`i${i}`}
-          onClick={event => { event.stopPropagation(); onTagClick('industry', t, fields.industry?.field) }}
-          className="rounded bg-sky-500/10 px-1 py-px text-[9px] leading-tight text-sky-700 hover:brightness-95 dark:text-sky-400"
-        >
-          {t}
-        </button>
-      ))}
-      {conceptTags.map((t, i) => (
-        <button
-          key={`c${i}`}
-          onClick={event => { event.stopPropagation(); onTagClick('concept', t, fields.concept?.field) }}
-          className="rounded bg-orange-500/10 px-1 py-px text-[9px] leading-tight text-orange-700 hover:brightness-95 dark:text-orange-400"
-        >
-          {t}
-        </button>
-      ))}
-    </div>
   )
 }
 
@@ -263,7 +213,7 @@ export function Monitor() {
               </div>
             </div>
             <div className="min-h-0 flex-1 overflow-auto p-3.5">
-              <AlertsList alertsQuery={alertsQuery} confirmClear={confirmClear} setConfirmClear={setConfirmClear} total={total} enterTs={enterTsRef.current} monitorExtFields={monitorExtFields} />
+              <AlertsList alertsQuery={alertsQuery} confirmClear={confirmClear} setConfirmClear={setConfirmClear} total={total} enterTs={enterTsRef.current} />
             </div>
           </section>
 
@@ -337,13 +287,12 @@ function SectionHeader({ icon: Icon, title }: { icon: any; title: string }) {
 }
 
 // ── 触发记录列表 ──────────────────────────────────────
-function AlertsList({ alertsQuery, confirmClear, setConfirmClear, total, enterTs, monitorExtFields }: {
+function AlertsList({ alertsQuery, confirmClear, setConfirmClear, total, enterTs }: {
   alertsQuery: ReturnType<typeof useQuery>
   confirmClear: boolean
   setConfirmClear: (v: boolean) => void
   total: number
   enterTs: number
-  monitorExtFields: { concept: MonitorExtFieldItem | null; industry: MonitorExtFieldItem | null }
 }) {
   const qc = useQueryClient()
   const navigate = useNavigate()
@@ -626,9 +575,9 @@ function AlertsList({ alertsQuery, confirmClear, setConfirmClear, total, enterTs
                       )}
                     </>
                   )}
-                  <AlertExtTags
-                    ev={ev}
-                    fields={monitorExtFields}
+                  <StockSectorTags
+                    symbol={ev.symbol}
+                    className="mt-1"
                     onTagClick={(kind, value, sourceField) => {
                       if (sourceField) setDimensionTarget({ kind, value, sourceField })
                     }}
@@ -850,7 +799,7 @@ function RulesList({ rulesQuery, onEdit }: {
                       className="inline-flex items-center gap-1 min-w-0 hover:bg-elevated/50 rounded px-0.5 transition-colors cursor-pointer"
                       title={`查看 ${r.symbols[0]} 日K`}
                     >
-                      <span className="font-mono text-xs font-medium text-foreground hover:text-accent">{r.symbols[0]}</span>
+                      <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-xs font-medium text-foreground hover:text-accent">{r.symbols[0]}</span><StockSectorTags symbol={r.symbols[0]} /></span>
                       {symbolNames[r.symbols[0]] && <span className="text-xs text-secondary truncate">{symbolNames[r.symbols[0]]}</span>}
                     </button>
                   ) : r.scope === 'watchlist_group' && r.group_id ? (
@@ -1175,9 +1124,9 @@ function MonitorExtConfigDialog({ open, fields, onClose }: {
           >
             <div className="flex items-center gap-2 mb-4">
               <Tags className="h-4 w-4 text-accent" />
-              <h3 className="text-sm font-medium text-foreground">个股通知标签配置</h3>
+              <h3 className="text-sm font-medium text-foreground">全站个股标签配置</h3>
             </div>
-            <p className="text-[11px] text-muted mb-4">选择在触发记录和推送通知中显示的行业/概念字段,留空则不显示。</p>
+            <p className="text-[11px] text-muted mb-4">选择全站个股标签的数据字段，留空自动选择。概念固定展示今日热度最高的一项，行业展示所属分类。</p>
             <div className="space-y-4">
               <ExtFieldSection label="行业字段" value={industry} onChange={setIndustry} groups={groups} loading={schema.isLoading} />
               <ExtFieldSection label="概念字段" value={concept} onChange={setConcept} groups={groups} loading={schema.isLoading} />
@@ -1193,7 +1142,7 @@ function MonitorExtConfigDialog({ open, fields, onClose }: {
   )
 }
 
-/** 单个 ext 字段配置区: 字段下拉 + 显示前N个 + 隐藏指定位置 */
+/** 板块字段来源；兼容保留旧裁剪配置，统一标签不再按位置裁剪。 */
 function ExtFieldSection({ label, value, onChange, groups, loading }: {
   label: string
   value: MonitorExtFieldItem | null
@@ -1202,19 +1151,8 @@ function ExtFieldSection({ label, value, onChange, groups, loading }: {
   loading: boolean
 }) {
   const field = value?.field ?? ''
-  const maxTags = value?.maxTags ?? 0
-  const hidden = value?.hiddenIndices ?? []
-
-  // 选/换字段时, 保留已有 maxTags/hiddenIndices 配置
   const pickField = (f: string | null) => {
-    onChange(f ? { field: f, maxTags: value?.maxTags, hiddenIndices: value?.hiddenIndices } : null)
-  }
-  const setMaxTags = (n: number) => {
-    onChange({ field, maxTags: n, hiddenIndices: n > 0 ? hidden.filter(i => i < n) : undefined })
-  }
-  const toggleHidden = (i: number) => {
-    const next = hidden.includes(i) ? hidden.filter(x => x !== i) : [...hidden, i]
-    onChange({ field, maxTags, hiddenIndices: next.length ? next : undefined })
+    onChange(f ? { ...value, field: f } : null)
   }
 
   return (
@@ -1227,7 +1165,7 @@ function ExtFieldSection({ label, value, onChange, groups, loading }: {
           disabled={loading}
           className="flex-1 min-w-0 h-8 bg-elevated border border-border rounded text-xs text-foreground px-2 focus:outline-none focus:border-accent/50"
         >
-          <option value="">不显示</option>
+          <option value="">自动选择</option>
           {groups.map(g => (
             <optgroup key={g.group} label={g.group}>
               {g.options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -1240,36 +1178,6 @@ function ExtFieldSection({ label, value, onChange, groups, loading }: {
           </button>
         )}
       </div>
-      {field && (
-        <div className="flex items-center gap-2 pl-0.5">
-          <span className="text-[10px] text-muted shrink-0">显示前N个</span>
-          <input
-            type="number" min={0} max={20}
-            value={maxTags || ''}
-            onChange={e => setMaxTags(e.target.value ? Number(e.target.value) : 0)}
-            placeholder="不限"
-            className="w-14 h-6 bg-elevated border border-border rounded text-[11px] text-foreground px-1.5 focus:outline-none focus:border-accent/50"
-          />
-          <span className="text-[10px] text-muted/60">留空=全部</span>
-        </div>
-      )}
-      {field && maxTags > 0 && (
-        <div className="flex items-center gap-2 pl-0.5">
-          <span className="text-[10px] text-muted shrink-0">隐藏位置</span>
-          <div className="flex flex-wrap gap-1">
-            {Array.from({ length: maxTags }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => toggleHidden(i)}
-                className={`w-5 h-5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
-                  hidden.includes(i) ? 'bg-elevated text-muted line-through' : 'bg-accent/15 text-accent'
-                }`}
-              >{i + 1}</button>
-            ))}
-          </div>
-          <span className="text-[10px] text-muted/60">点数字划掉=隐藏该位置</span>
-        </div>
-      )}
     </div>
   )
 }

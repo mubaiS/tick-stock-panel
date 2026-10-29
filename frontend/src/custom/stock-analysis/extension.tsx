@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Sparkles, LineChart, History as HistoryIcon, Loader2, ExternalLink, Bell, AlertTriangle } from 'lucide-react'
@@ -105,7 +106,7 @@ export function StockAnalysis() {
                 className="group flex items-center gap-2 text-sm rounded-md px-1.5 py-0.5 -mx-1.5 hover:bg-elevated transition-colors"
               >
                 <span className="text-foreground font-medium group-hover:text-sky-300 transition-colors">{name || symbol}</span>
-                <span className="text-[10px] font-mono text-muted">{symbol}</span>
+                <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[10px] font-mono text-muted">{symbol}</span><StockSectorTags symbol={symbol} /></span>
                 <ExternalLink className="h-3 w-3 text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button
@@ -288,7 +289,7 @@ function HistorySidebar() {
                   >
                     <div className="flex items-center gap-1.5 min-w-0">
                       <span className="text-xs font-medium text-foreground truncate">{r.name || r.symbol}</span>
-                      <span className="text-[10px] font-mono text-muted shrink-0">{r.symbol}</span>
+                      <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[10px] font-mono text-muted shrink-0">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
                     </div>
                     <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted">
                       <span>{fmtRelative(r.created_at)}</span>

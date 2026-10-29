@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import React, { useCallback, useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { WatchlistGroup } from '@/lib/api'
@@ -134,14 +135,17 @@ const GroupCard = React.memo(function GroupCard({
                     {i + 1}
                   </span>
                 )}
-                <span className="shrink-0 font-mono text-xs text-foreground">{r.symbol}</span>
-                <span className="flex min-w-0 flex-1 items-center gap-1">
+                <span className="min-w-0 flex-1">
+                <span className="flex min-w-0 flex-wrap items-center gap-1">
+                  <span className="shrink-0 font-mono text-xs text-foreground">{r.symbol}</span>
                   <span className="min-w-0 truncate text-xs text-secondary">{r.rt_name ?? r.name}</span>
                   {board && (
                     <span className={`shrink-0 inline-flex items-center justify-center px-1 h-[16px] rounded text-[9px] font-bold leading-none ${board.color}`}>
                       {board.label}
                     </span>
                   )}
+                </span>
+                <StockSectorTags symbol={r.symbol} assetType={r.asset_type} />
                 </span>
                 <span className={`shrink-0 font-mono text-xs tabular-nums ${cls}`}>{fmtPrice(price)}</span>
                 <span className={`w-[52px] shrink-0 text-right font-mono text-xs font-medium tabular-nums ${cls}`}>

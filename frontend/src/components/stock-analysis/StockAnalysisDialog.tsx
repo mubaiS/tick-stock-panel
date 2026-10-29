@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -108,12 +109,12 @@ export function StockAnalysisDialog({ task, mode, minimized }: Props) {
                   : <LineChart className="h-4.5 w-4.5 text-sky-300" />}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-semibold text-foreground truncate">
                     {isHistory ? '历史分析报告' : 'AI 个股分析'}
                   </span>
                   {task && <span className="text-xs text-secondary truncate">{task.name}</span>}
-                  {task && <span className="text-[10px] font-mono text-muted shrink-0">{task.symbol}</span>}
+                  {task && <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[10px] font-mono text-muted shrink-0">{task.symbol}</span><StockSectorTags symbol={task.symbol} /></span>}
                 </div>
                 <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted">
                   {meta?.summary ? (

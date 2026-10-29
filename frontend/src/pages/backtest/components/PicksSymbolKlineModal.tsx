@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
@@ -120,7 +121,7 @@ export function PicksSymbolKlineModal({ symbol, result, periodStart, periodEnd, 
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-semibold text-foreground">{symbol}</span>
+                    <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-sm font-semibold text-foreground">{symbol}</span><StockSectorTags symbol={symbol} /></span>
                     {name && <span className="truncate text-sm text-foreground">{name}</span>}
                     {tag && (
                       <span className="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[10px] text-accent">

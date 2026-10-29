@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -710,8 +711,11 @@ export function CreateExtDialog({ onClose }: { onClose: () => void }) {
                           {urlPreview.preview.slice(0, 3).map((row, idx) => (
                             <tr key={idx} className="border-t border-border/30 text-secondary">
                               {previewColumns.map(col => (
-                                <td key={col} className="max-w-[140px] truncate px-2 py-1 font-mono">
-                                  {row[col] == null ? '—' : String(row[col])}
+                                <td key={col} className="max-w-[220px] px-2 py-1 font-mono">
+                                  <span className="block truncate">{row[col] == null ? '—' : String(row[col])}</span>
+                                  {!marketLevel && col === (symbolMap.col ?? codeMap.col) && (
+                                    <StockSectorTags symbol={row[col] == null ? null : String(row[col])} />
+                                  )}
                                 </td>
                               ))}
                             </tr>

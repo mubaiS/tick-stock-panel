@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState, type ReactNode } from 'react'
 import { Settings2, RadioTower, Star, ExternalLink } from 'lucide-react'
 import type { KlineRow, FinancialMetricRecord } from '@/lib/api'
@@ -143,6 +144,7 @@ export function StockInfoBar({
         <div className="flex min-h-7 items-baseline gap-x-3 flex-wrap">
           <span className="text-foreground font-bold text-sm tracking-wide">{symbol}</span>
           {name && <span className="text-secondary font-medium">{name}</span>}
+          <StockSectorTags symbol={symbol} />
           <span className="ml-auto self-center text-muted">
             <span className="inline-block h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-current border-t-transparent" />
           </span>
@@ -248,6 +250,7 @@ export function StockInfoBar({
       <div className="flex items-baseline gap-x-3 flex-wrap">
         <span className="text-foreground font-bold text-sm tracking-wide">{symbol}</span>
         <span className="text-secondary font-medium">{displayName}</span>
+        <StockSectorTags symbol={symbol} />
         <span style={{ color: clr }} className="text-lg font-bold tabular-nums">
           {fmtPrice(close)}
         </span>

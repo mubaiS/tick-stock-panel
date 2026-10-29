@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useQuoteStream, useQuoteStreamStatus } from '@/lib/useQuoteStream'
 import { ToastContainer, toast } from '@/components/Toast'
 import { AlertToastContainer } from '@/components/AlertToast'
+import { StockSectorLabelsProvider } from '@/components/StockSectorTags'
 import { AiAnalysisHost } from '@/components/financials/AiAnalysisHost'
 import { AiReportBubble } from '@/components/financials/AiReportBubble'
 import { StockAnalysisHost } from '@/components/stock-analysis/StockAnalysisHost'
@@ -694,6 +695,7 @@ export function Layout() {
   }
 
   return (
+    <StockSectorLabelsProvider>
     <div
       className="h-full grid bg-base text-foreground overflow-hidden transition-[grid-template-columns] duration-200 ease-smooth"
       style={{ gridTemplateColumns: isDesktop && !overlayPreview ? (navState === 'expanded' ? '14rem 1fr' : navState === 'rail' ? '3.5rem 1fr' : '0 1fr') : '1fr' }}
@@ -1183,5 +1185,6 @@ export function Layout() {
         </div>
       )}
     </div>
+    </StockSectorLabelsProvider>
   )
 }

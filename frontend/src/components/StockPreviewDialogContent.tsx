@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -272,7 +273,7 @@ export function StockPreviewDialogContent({ symbol, name, onClose, triggerInfo, 
             {/* 顶栏: 单行 = 个股身份 + 视图/区间控件 + 操作按钮。纯样式重排, 交互逻辑不变 */}
             <div className="shrink-0 border-b border-border/60 bg-elevated/30">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-2 pt-2.5 sm:px-5">
-              <div className="flex min-w-0 items-center gap-2">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 {(() => {
                   const board = symbol ? boardTag(symbol) : null
                   return board ? (
@@ -286,6 +287,7 @@ export function StockPreviewDialogContent({ symbol, name, onClose, triggerInfo, 
 
                 {/* 切股导航: 上一只 / n·N / 下一只 */}
                 <NavPager nav={nav} prevLabel="上一只" nextLabel="下一只" />
+                <StockSectorTags symbol={symbol} className="basis-full" />
               </div>
 
               {/* 视图/区间控件: 原第二行并入顶行, 紧邻操作按钮 (原「自选于」标注位置) */}

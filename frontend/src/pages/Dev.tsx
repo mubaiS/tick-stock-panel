@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Search, AlertTriangle, CheckCircle2, XCircle, FlaskConical, Activity, Bell } from 'lucide-react'
@@ -405,7 +406,7 @@ function LadderTestPanel() {
           {result.triggered.map((ev) => (
             <div key={ev.rule_id} className="rounded-btn border border-emerald-400/30 bg-emerald-400/5 p-3 text-sm">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-foreground">{ev.symbol}</span>
+                <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-medium text-foreground">{ev.symbol}</span><StockSectorTags symbol={ev.symbol} /></span>
                 {ev.name && <span className="text-secondary">{ev.name}</span>}
                 <span className="ml-auto rounded bg-emerald-400/15 px-1.5 py-0.5 text-xs text-emerald-400">{ev.type}</span>
               </div>
@@ -424,7 +425,7 @@ function LadderTestPanel() {
           {result.not_triggered.map((r) => (
             <div key={r.rule_id} className="rounded-btn border border-border bg-surface/40 p-3 text-sm">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-foreground">{r.symbol}</span>
+                <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-medium text-foreground">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
                 <span className="text-secondary text-xs">{r.rule_name}</span>
               </div>
               <div className="text-xs text-muted tabular-nums">

@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -361,7 +362,7 @@ function StockSearchBox({
                   <button
                     type="button"
                     onClick={() => handleSelect(r)}
-                    className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
+                    className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1 min-w-0 text-left"
                   >
                     <span className="font-mono shrink-0 w-[80px]">{r.symbol}</span>
                     {/* 名称+标签组: 标签紧贴名称文字, 而不是被 flex-1 推到行尾 */}
@@ -380,6 +381,7 @@ function StockSearchBox({
                         )
                       })()}
                     </span>
+                    <StockSectorTags symbol={r.symbol} assetType={r.asset_type} className="basis-full" />
                   </button>
                   {inWatchlist ? (
                     // 已加自选: 对勾标识 + 分组勾选面板, 可继续加入/移出其他分组
@@ -609,6 +611,7 @@ const StockCard = React.memo(function StockCard({
           )}
           {isMonitored && <span className="ml-auto"><RealtimeDot /></span>}
         </div>
+        <StockSectorTags symbol={r.symbol} assetType={r.asset_type} className="mb-2" />
 
         {/* 第二行: 大价格 + 涨跌幅胶囊 */}
         <div className="flex items-end justify-between gap-2 mb-2">
@@ -1903,7 +1906,7 @@ export function Watchlist() {
                         <button
                           type="button"
                           onClick={() => { setPreviewSymbol(r.symbol); setPreviewName(name ?? '') }}
-                          className="flex items-center gap-1 text-left min-w-0"
+                          className="flex flex-wrap items-center gap-1 text-left min-w-0"
                         >
                           <span className="font-mono text-foreground text-xs group-hover:text-accent transition-colors duration-150">
                             {r.symbol}
@@ -1919,6 +1922,7 @@ export function Watchlist() {
                             </span>
                           ) : null}
                           {monitoredSymbols.has(r.symbol) && <span className="ml-2"><RealtimeDot /></span>}
+                          <StockSectorTags symbol={r.symbol} assetType={r.asset_type} className="basis-full" />
                         </button>
                         {/* 删除入口：从分组移除 + 从自选移除(二次确认) + 移到顶部 */}
                         <div className="ml-auto pl-1 shrink-0">

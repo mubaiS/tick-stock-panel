@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * 分钟数据缺口体检面板 (数据页 · 分钟 K 卡片 → 设置弹窗内)。
  *
@@ -131,7 +132,7 @@ export function MinuteGapPanel() {
                   key={`${g.symbol}-${g.date}`}
                   className="grid grid-cols-[minmax(0,1.2fr)_90px_78px_78px_minmax(0,1fr)_74px] items-center border-b border-border/40 px-2 py-1 text-[11px] last:border-b-0 hover:bg-elevated/40"
                 >
-                  <span className="truncate font-mono text-foreground" title={g.symbol}>{g.symbol}</span>
+                  <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="truncate font-mono text-foreground" title={g.symbol}>{g.symbol}</span><StockSectorTags symbol={g.symbol} /></span>
                   <span className="font-mono text-secondary">{g.date}</span>
                   <span className="text-right font-mono text-warning">{g.actual_bars}/{g.expected_bars}</span>
                   <span className="text-right font-mono text-muted">-{g.missing_bars}</span>

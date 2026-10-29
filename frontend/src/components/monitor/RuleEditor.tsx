@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -475,7 +476,7 @@ export function RuleEditor({ rule, preset, simple, onClose, onSaved }: Props) {
         {draft.symbols.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {draft.symbols.map(s => (
-              <span key={s} className="rounded bg-elevated px-1.5 py-0.5 text-[10px] text-secondary font-mono">{s}</span>
+              <span key={s} className="rounded bg-elevated px-1.5 py-0.5 text-[10px] text-secondary font-mono">{s}<StockSectorTags symbol={s} /></span>
             ))}
           </div>
         )}
@@ -1103,7 +1104,7 @@ export function RuleEditor({ rule, preset, simple, onClose, onSaved }: Props) {
                     <div className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded border border-border bg-surface shadow-lg">
                       {symbolSearch.data.results.map(r => (
                         <button key={r.symbol} onClick={() => addSymbol(r.symbol)} className="block w-full px-2 py-1 text-left text-[11px] hover:bg-elevated cursor-pointer">
-                          <span className="font-mono text-foreground/80">{r.symbol}</span>
+                          <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-foreground/80">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
                           {(() => { const b = boardTag(r.symbol); return b && <span className={`ml-1 inline-flex items-center justify-center rounded px-0.5 text-[9px] font-bold leading-tight border ${b.color}`}>{b.label}</span> })()}
                           <span className="ml-1 text-muted">{r.name}</span>
                         </button>
@@ -1151,10 +1152,10 @@ export function RuleEditor({ rule, preset, simple, onClose, onSaved }: Props) {
                       const b = boardTag(sym)
                       const name = nameBySymbol[sym]
                       return (
-                        <span key={sym} className="inline-flex items-center gap-1 rounded border border-border bg-elevated px-1.5 py-0.5 text-[10px] text-secondary">
+                        <span key={sym} className="inline-flex flex-wrap items-center gap-1 rounded border border-border bg-elevated px-1.5 py-0.5 text-[10px] text-secondary">
                           <span className="max-w-24 truncate text-foreground/90" title={name ? `${name} ${sym}` : sym}>{name ?? sym}</span>
                           {b && <span className={`inline-flex items-center justify-center rounded px-0.5 text-[9px] font-bold leading-tight border ${b.color}`}>{b.label}</span>}
-                          <span className="font-mono text-[9px] tabular-nums text-muted">{sym}</span>
+                          <span className="font-mono text-[9px] tabular-nums text-muted">{sym}</span><StockSectorTags symbol={sym} />
                           <button
                             onClick={() => setDraft(d => ({ ...d, symbols: d.symbols.filter(s => s !== sym) }))}
                             className="text-muted transition-colors hover:text-danger cursor-pointer"
@@ -1229,12 +1230,12 @@ export function RuleEditor({ rule, preset, simple, onClose, onSaved }: Props) {
                       {selectedGroupSymbols.map(sym => {
                         const b = boardTag(sym)
                         return (
-                          <span key={sym} className="inline-flex items-center gap-1 rounded border border-border bg-elevated px-1.5 py-0.5 text-[10px] text-secondary">
+                          <span key={sym} className="inline-flex flex-wrap items-center gap-1 rounded border border-border bg-elevated px-1.5 py-0.5 text-[10px] text-secondary">
                             <span className="max-w-24 truncate text-foreground/90" title={groupNameBySymbol[sym] ? `${groupNameBySymbol[sym]} ${sym}` : sym}>
                               {groupNameBySymbol[sym] ?? sym}
                             </span>
                             {b && <span className={`inline-flex items-center justify-center rounded px-0.5 text-[9px] font-bold leading-tight border ${b.color}`}>{b.label}</span>}
-                            <span className="font-mono text-[9px] tabular-nums text-muted">{sym}</span>
+                            <span className="font-mono text-[9px] tabular-nums text-muted">{sym}</span><StockSectorTags symbol={sym} />
                           </span>
                         )
                       })}

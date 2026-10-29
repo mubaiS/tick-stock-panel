@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
@@ -174,7 +175,7 @@ export function Lots() {
                             title={`查看 ${lot.symbol} 日K`}
                             className="inline-flex items-center gap-1.5 min-w-0 hover:bg-elevated/50 rounded px-0.5 py-0.5 transition-colors cursor-pointer"
                           >
-                            <span className="font-mono font-medium text-foreground">{lot.symbol}</span>
+                            <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono font-medium text-foreground">{lot.symbol}</span><StockSectorTags symbol={lot.symbol} /></span>
                             {(() => { const b = boardTag(lot.symbol); return b && <span className={`inline-flex items-center justify-center rounded px-1 text-[9px] font-bold leading-tight border ${b.color}`}>{b.label}</span> })()}
                             {symbolNames[lot.symbol] && <span className="text-secondary truncate max-w-28">{symbolNames[lot.symbol]}</span>}
                           </button>
@@ -328,10 +329,10 @@ function LotDialog({ lot, onClose }: { lot: Lot; onClose: () => void }) {
           <span className="text-[11px] text-muted">标的</span>
           {draft.symbol ? (
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded bg-elevated px-2 py-1 font-mono text-[11px] text-secondary">
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="inline-flex items-center gap-1 rounded bg-elevated px-2 py-1 font-mono text-[11px] text-secondary">
                 {draft.symbol}
                 <button onClick={() => setDraft(d => ({ ...d, symbol: '' }))} className="text-muted hover:text-danger cursor-pointer"><span className="text-[10px]">✕</span></button>
-              </span>
+              </span><StockSectorTags symbol={draft.symbol} /></span>
               <span className="text-[10px] text-muted">点 ✕ 可重选</span>
             </div>
           ) : (
@@ -352,7 +353,7 @@ function LotDialog({ lot, onClose }: { lot: Lot; onClose: () => void }) {
                       onClick={() => { setDraft(d => ({ ...d, symbol: r.symbol })); setSymbolQuery('') }}
                       className="block w-full px-2.5 py-1.5 text-left text-[11px] hover:bg-elevated cursor-pointer"
                     >
-                      <span className="font-mono text-foreground/80">{r.symbol}</span>
+                      <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-foreground/80">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
                       <span className="ml-1.5 text-muted">{r.name}</span>
                     </button>
                   ))}

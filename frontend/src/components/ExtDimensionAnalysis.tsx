@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useMemo, useState, type ComponentType } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -415,6 +416,9 @@ export function ExtDimensionAnalysis({
                           {displayColumns.map(col => (
                             <td key={col.field} className={`whitespace-nowrap px-4 py-2 ${col.field === activeDimensionField ? 'max-w-[18rem] truncate text-secondary' : col.field === 'symbol' || col.field === 'code' || col.field === '股票代码' ? 'font-mono text-secondary' : 'text-foreground'}`}>
                               {formatValue(row[col.field], col)}
+                              {col.field === displayColumns.find(c => ['symbol', 'code', 'name', '股票代码', '代码', '股票简称'].includes(c.field))?.field && (
+                                <StockSectorTags symbol={String(row.symbol ?? row.code ?? row['股票代码'] ?? row['代码'] ?? '')} className="ml-1" />
+                              )}
                             </td>
                           ))}
                         </tr>

@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
@@ -338,7 +339,7 @@ function BenchmarkCard({ q, onOpenStock }: {
                 </span>
                 <span className="flex min-w-0 flex-1 items-center gap-1.5">
                   <span className="truncate text-foreground">{i.name ?? i.thscode}</span>
-                  <span className="shrink-0 font-mono text-[9px] text-muted">{i.ticker ?? i.thscode}</span>
+                  <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="shrink-0 font-mono text-[9px] text-muted">{i.ticker ?? i.thscode}</span><StockSectorTags symbol={i.thscode} /></span>
                   {(() => { const b = boardTag(i.thscode); return b && (
                     <span className={`shrink-0 inline-flex items-center rounded border px-1 text-[8px] font-bold leading-tight ${b.color}`}>
                       {b.label}
@@ -567,7 +568,7 @@ const IntradayRowView = memo(function IntradayRowView({ row, rank, onPreview }: 
           title="查看个股详情"
           className="flex min-w-0 items-center gap-1.5 text-left"
         >
-          <span className="shrink-0 font-mono text-xs text-foreground transition-colors duration-150 group-hover:text-accent">{row.symbol}</span>
+          <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="shrink-0 font-mono text-xs text-foreground transition-colors duration-150 group-hover:text-accent">{row.symbol}</span><StockSectorTags symbol={row.symbol} /></span>
           <span className="min-w-0 max-w-40 truncate text-xs text-secondary transition-colors duration-150 group-hover:text-foreground">{row.name ?? '—'}</span>
           {board && (
             <span className={`shrink-0 rounded border px-1 text-[9px] font-bold leading-tight ${board.color}`}>
@@ -1035,7 +1036,7 @@ const AbnormalRowView = memo(function AbnormalRowView({ row, rank, onPreview }: 
           title="查看个股详情"
           className="flex min-w-0 items-center gap-1.5 text-left"
         >
-          <span className="shrink-0 font-mono text-xs text-foreground group-hover:text-accent transition-colors duration-150">{row.symbol}</span>
+          <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="shrink-0 font-mono text-xs text-foreground group-hover:text-accent transition-colors duration-150">{row.symbol}</span><StockSectorTags symbol={row.symbol} /></span>
           <span className="min-w-0 max-w-40 truncate text-xs text-secondary group-hover:text-foreground transition-colors duration-150">{row.name ?? '—'}</span>
           {board && (
             <span className={`shrink-0 rounded px-1 text-[9px] font-bold leading-tight border ${board.color}`}>

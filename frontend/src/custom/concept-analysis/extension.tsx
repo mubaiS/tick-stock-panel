@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { StockSectorTags, StockSectorLabelsContext, sectorLabelsToday } from '@/components/StockSectorTags'
+import { useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import {
@@ -67,7 +68,7 @@ interface ConceptStat {
   avgTurnover: number | null
   avgVolRatio: number | null
   leader: EnrichedStock | null
-  heatScore: number
+  heatScore: number | null
   riskScore: number
 }
 
@@ -176,7 +177,7 @@ function enrichStock(stock: StockRow, marketMap: Map<string, MarketSnapshotRow>)
   }
 }
 
-function calcConceptStat(group: DimensionGroup, marketMap: Map<string, MarketSnapshotRow>): ConceptStat {
+function calcConceptStat(group: DimensionGroup, marketMap: Map<string, MarketSnapshotRow>, heat: Record<string, number>): ConceptStat {
   const seen = new Set<string>()
   const stocks = group.stocks
     .map(s => enrichStock(s, marketMap))
@@ -201,13 +202,7 @@ function calcConceptStat(group: DimensionGroup, marketMap: Map<string, MarketSna
   const avgPct = avg(pctValues)
   const medianPct = median(pctValues)
   const upRate = pctValues.length ? upCount / pctValues.length : 0
-  const amountScore = clamp01(Math.log1p(totalAmount) / Math.log1p(80_000_000_000))
-  const strongScore = stocks.length ? clamp01(strongCount / Math.max(1, stocks.length * 0.18)) : 0
-  const leaderPart = clamp01((leader?.leaderScore ?? 0) / 100)
-  const avgPart = clamp01(((avgPct ?? 0) + 0.02) / 0.09)
-  const upPart = clamp01((upRate - 0.35) / 0.55)
-
-  const heatScore = (avgPart * 0.38 + upPart * 0.2 + strongScore * 0.16 + amountScore * 0.12 + leaderPart * 0.14) * 100
+  const heatScore = heat[group.key] ?? null
   const riskScore = (clamp01((-(avgPct ?? 0) + 0.01) / 0.08) * 0.55 + clamp01(weakCount / Math.max(1, stocks.length * 0.18)) * 0.45) * 100
 
   return {
@@ -239,7 +234,7 @@ function statSort(mode: SortMode) {
       case 'amount': return b.totalAmount - a.totalAmount
       case 'down': return (a.avgPct ?? Infinity) - (b.avgPct ?? Infinity)
       case 'heat':
-      default: return b.heatScore - a.heatScore
+      default: return (b.heatScore ?? -Infinity) - (a.heatScore ?? -Infinity)
     }
   }
 }
@@ -302,11 +297,23 @@ export function ConceptAnalysis() {
     [rowsQuery.data, activeConfig, fieldConfig.dimensionField],
   )
 
+  const globalLabels = useContext(StockSectorLabelsContext)
+  const sourceField = activeConfigId && resolved.dimensionField ? `${activeConfigId}.${resolved.dimensionField}` : ''
+  const usesGlobalSource = sourceField === globalLabels?.data?.concept_source
+  const heatQuery = useQuery({
+    queryKey: QK.stockSectorLabels(sectorLabelsToday(), sourceField),
+    queryFn: () => api.stockSectorLabels(sourceField),
+    enabled: !!sourceField && !usesGlobalSource,
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+  })
+  const heat = (usesGlobalSource ? globalLabels?.data : heatQuery.data)?.concept_heat
+
   const stats = useMemo(() => {
     return resolved.groups
-      .map(g => calcConceptStat(g, marketMap))
+      .map(g => calcConceptStat(g, marketMap, heat ?? {}))
       .filter(s => s.count > 0)
-  }, [resolved.groups, marketMap])
+  }, [resolved.groups, marketMap, heat])
 
   const filteredStats = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -626,7 +633,7 @@ function PulseList({
                     return stock ? (
                       <span key={stock.symbol} title={stock.name || stock.symbol} onClick={e => { e.stopPropagation(); onStockClick(stock.symbol, stock.name || undefined, toNavItems(sortedStocks.slice(0, MAX_RENDERED_STOCKS))) }} className={cn('flex min-w-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] cursor-pointer hover:brightness-125', i === 0 ? 'bg-amber-300/10 text-foreground' : 'bg-elevated/60 text-secondary', stock.symbol === activeSymbol && 'ring-1 ring-accent/60')}>
                         <span className="flex min-w-0 items-center gap-1">
-                          <span className="min-w-0 truncate font-medium">{stock.name || stock.symbol}</span>
+                          <span className="min-w-0"><span className="block truncate font-medium">{stock.name || stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
                         </span>
                         <span className={cn('shrink-0 font-mono', priceColorClass(stock.change_pct))}>{stock.change_pct != null ? fmtPct(stock.change_pct) : '—'}</span>
                       </span>
@@ -691,7 +698,7 @@ function ConceptRail({
                 <span>{item.count}只</span>
                 <span className="text-bull">{item.upCount}涨</span>
                 <span className="text-bear">{item.downCount}跌</span>
-                <span className="ml-auto">强度 {item.heatScore.toFixed(0)}</span>
+                <span className="ml-auto">强度 {item.heatScore?.toFixed(0) ?? '—'}</span>
               </div>
             </button>
           )
@@ -713,7 +720,7 @@ function ConceptFocus({ stat, onStockClick, activeSymbol }: { stat: ConceptStat 
           <div className="min-w-0">
             <div className="flex items-center gap-3">
               <h3 className="truncate text-xl font-semibold text-foreground">{stat.key}</h3>
-              <span className="rounded-full bg-blue-400/10 px-2 py-0.5 text-[10px] text-blue-300">强度 {stat.heatScore.toFixed(0)}</span>
+              <span className="rounded-full bg-blue-400/10 px-2 py-0.5 text-[10px] text-blue-300">强度 {stat.heatScore?.toFixed(0) ?? '—'}</span>
             </div>
             <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
               <span>{stat.count} 只成分</span>
@@ -758,7 +765,7 @@ function ConceptFocus({ stat, onStockClick, activeSymbol }: { stat: ConceptStat 
                 <td className="px-4 py-2 font-mono text-muted">{idx + 1}</td>
                 <td className="px-4 py-2">
                   <div className="font-medium text-foreground">{s.name || '—'}</div>
-                  <div className="font-mono text-[10px] text-muted">{s.symbol}</div>
+                  <div className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><div className="font-mono text-[10px] text-muted">{s.symbol}</div><StockSectorTags symbol={s.symbol} /></div>
                 </td>
                 <td className={cn('px-4 py-2 font-mono tabular-nums', priceColorClass(s.change_pct))}>{s.change_pct != null ? fmtPct(s.change_pct) : '—'}</td>
                 <td className="px-4 py-2 font-mono text-foreground">{s.turnover_rate != null ? `${s.turnover_rate.toFixed(2)}%` : '—'}</td>
@@ -802,7 +809,7 @@ function LeaderStage({ stocks, onStockClick, activeSymbol }: { stocks: EnrichedS
             </div>
             <div className="mt-2 truncate text-sm font-medium text-foreground">{stock.name || stock.symbol}</div>
             <div className="mt-0.5 flex items-center justify-between text-[11px]">
-              <span className="font-mono text-muted">{stock.symbol}</span>
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-muted">{stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
               <span className={cn('font-mono', priceColorClass(stock.change_pct))}>{stock.change_pct != null ? fmtPct(stock.change_pct) : '—'}</span>
             </div>
           </div>

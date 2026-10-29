@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -317,7 +318,7 @@ const StockCard = React.memo(function StockCard({ stock, extFields, direction, s
     >
       {/* 名称行 */}
       <div className="flex items-center gap-1.5 w-full min-w-0 pr-4">
-        <span className={`${style.nameCls} font-medium truncate`}>{stock.name}</span>
+        <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className={`${style.nameCls} font-medium truncate`}>{stock.name}</span><StockSectorTags symbol={stock.symbol} /></span>
         {stock.is_one_word && (
           <span className={`shrink-0 rounded-sm border px-1 py-px text-[9px] font-medium leading-none ${
             direction === 'down'
@@ -526,7 +527,7 @@ function MonitorMenu({ stock, direction, sealMode, monitorRule, anchorRect, hasD
         <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-elevated/40">
           <div className="flex items-center gap-1.5 min-w-0">
             <Bell className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-            <span className="font-medium text-foreground truncate">{stock.name ?? stock.symbol}</span>
+            <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-medium text-foreground truncate">{stock.name ?? stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
           </div>
           <button onClick={onClose} className="text-muted hover:text-foreground shrink-0"><X className="h-3.5 w-3.5" /></button>
         </div>

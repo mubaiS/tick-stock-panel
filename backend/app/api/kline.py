@@ -306,6 +306,21 @@ def search_instruments(
     return {"results": rows}
 
 
+@router.get("/instruments/sector-labels")
+def instruments_sector_labels(request: Request, concept_source: str | None = None):
+    """全市场轻量板块标签快照；可选概念字段供概念分析页复用同一热度口径。"""
+    from app.services.stock_sector_labels import StockSectorLabelsService
+
+    service = getattr(request.app.state, "stock_sector_labels", None)
+    if service is None:
+        service = StockSectorLabelsService(request.app.state.repo)
+        request.app.state.stock_sector_labels = service
+    try:
+        return service.snapshot(concept_source)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/instruments/names")
 def instruments_names(request: Request, symbols: list[str]):
     """批量查标的名称 (股票 + ETF + 指数)。传入 symbol 列表, 返回 {symbol: name}。"""

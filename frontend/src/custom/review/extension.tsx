@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * AI 大盘复盘页 —— 以流式 LLM 复盘报告为主体的盘后复盘工作台。
  *
@@ -1096,9 +1097,9 @@ function _DtPill({ item, idx, value, onOpenStock }: {
       <span className={cn('grid h-[18px] w-[18px] min-w-[18px] place-items-center rounded-full font-mono text-[9px] font-bold leading-none', _rankCls(idx))}>
         {idx + 1}
       </span>
-      <span className="text-[11px] text-foreground/90 transition-colors group-hover:text-accent">
+      <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[11px] text-foreground/90 transition-colors group-hover:text-accent">
         {item.name ?? item.thscode}
-      </span>
+      </span><StockSectorTags symbol={item.thscode} /></span>
       {(() => { const b = boardTag(item.thscode); return b && (
         <span className={`inline-flex items-center rounded border px-1 text-[8px] font-bold leading-tight ${b.color}`}>
           {b.label}
@@ -1218,7 +1219,7 @@ function _DtStockTable({ items, tab, onOpenStock }: {
             </span>
             <span className="min-w-0 flex-1">
               <span className="text-foreground">{i.name ?? '—'}</span>
-              <span className="ml-1.5 font-mono text-[9px] text-muted">{i.ticker ?? i.thscode}</span>
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="ml-1.5 font-mono text-[9px] text-muted">{i.ticker ?? i.thscode}</span><StockSectorTags symbol={i.thscode} /></span>
               {(() => { const b = boardTag(i.thscode); return b && (
                 <span className={`ml-1 inline-flex items-center rounded border px-1 text-[8px] font-bold leading-tight ${b.color}`}>
                   {b.label}
@@ -1312,7 +1313,7 @@ function _DtSeatList({ seats, onOpenStock }: {
                   className="inline-flex items-baseline gap-1.5 rounded-full border border-border/60 bg-surface/60 px-2 py-0.5 text-[10px] transition-all hover:border-accent/40 hover:text-accent"
                   title={`查看 ${r.name ?? r.thscode} 详情`}
                 >
-                  <span>{r.name ?? r.thscode}</span>
+                  <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span>{r.name ?? r.thscode}</span><StockSectorTags symbol={r.thscode} /></span>
                   {(() => { const b = boardTag(r.thscode); return b && (
                     <span className={`inline-flex items-center self-center rounded border px-1 text-[8px] font-bold leading-tight ${b.color}`}>
                       {b.label}

@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { FileText, ImagePlus, Keyboard, Loader2, Plus, Upload, X } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -495,6 +496,7 @@ export function WatchlistImportDialog({
                 {sym ? ` · ${sym}` : ''}
               </span>
             </div>
+            {sym && <StockSectorTags symbol={sym} />}
             {status}
           </div>
         </label>

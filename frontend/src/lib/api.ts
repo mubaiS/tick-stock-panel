@@ -994,6 +994,16 @@ export interface MonitorCondition {
 
 export type StrategyNotifyEvent = 'buy_signal' | 'sell_signal' | 'pool_entry' | 'pool_exit'
 
+export interface StockSectorLabelsSnapshot {
+  as_of: string | null
+  updated_at: string
+  concept_source: string | null
+  industry_source: string | null
+  concept_heat: Record<string, number>
+  stocks: Record<string, { concept: string | null; industry: string | null }>
+  aliases: Record<string, string>
+}
+
 export type SectorKind = 'index' | 'concept' | 'industry'
 
 export interface SectorMonitorTarget {
@@ -3135,6 +3145,9 @@ export const api = {
       `/api/kline/instruments/search?q=${encodeURIComponent(q)}&limit=${limit}${assetTypes ? `&asset_types=${encodeURIComponent(assetTypes)}` : ''}`,
     ),
 
+  /** 全市场个股最热概念、行业及其行情日期，共享一份缓存快照。 */
+  stockSectorLabels: (conceptSource?: string) =>
+    request<StockSectorLabelsSnapshot>(`/api/kline/instruments/sector-labels${conceptSource ? `?concept_source=${encodeURIComponent(conceptSource)}` : ''}`),
   /** 批量查股票名称 (传入 symbol 列表, 返回 {symbol: name}) */
   instrumentNames: (symbols: string[]) =>
     request<{ names: Record<string, string> }>('/api/kline/instruments/names', {

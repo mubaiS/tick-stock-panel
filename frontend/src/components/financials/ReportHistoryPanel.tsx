@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect } from 'react'
 import { History, Trash2, FileText, Clock, Sparkles, Loader2 } from 'lucide-react'
 import { useHistoryReports, openHistoryReport, deleteReport, loadHistory } from '@/lib/aiReportStore'
@@ -76,7 +77,7 @@ export function ReportHistoryPanel() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-foreground truncate">{r.name || r.symbol}</span>
-                  <span className="text-[10px] font-mono text-muted shrink-0">{r.symbol}</span>
+                  <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-[10px] font-mono text-muted shrink-0">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
                   {r.focus && (
                     <span className="hidden sm:inline-block px-1.5 py-px rounded bg-purple-400/10 text-purple-300 text-[9px] shrink-0">
                       {r.focus}

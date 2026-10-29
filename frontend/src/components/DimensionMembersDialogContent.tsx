@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -269,6 +270,7 @@ export function DimensionMembersDialogContent({ target, onClose, onStockClick }:
                           {board && <span className={`inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded border text-[9px] font-bold ${board.color}`}>{board.label}</span>}
                         </span>
                         <span className="block font-mono text-[10px] text-muted">{row.symbol}</span>
+                        <StockSectorTags symbol={row.symbol} />
                       </span>
                       <span className="text-right tabular-nums text-secondary">{fmtPrice(finite(row.close))}</span>
                       <span className={`text-right tabular-nums font-medium ${priceColorClass(finite(row.change_pct))}`}>{fmtPct(finite(row.change_pct))}</span>

@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -222,7 +223,7 @@ export function PriceAlertDialog({
             <div className="flex items-center gap-2">
               <h2 id="price-alert-title" className="text-sm font-semibold text-foreground">点位提醒</h2>
               <span className="truncate text-xs text-secondary">{name || symbol}</span>
-              <span className="shrink-0 font-mono text-[10px] text-muted">{symbol}</span>
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="shrink-0 font-mono text-[10px] text-muted">{symbol}</span><StockSectorTags symbol={symbol} /></span>
             </div>
             <div className="mt-0.5 text-[10px] text-muted">
               当前价 <span className="font-mono text-foreground">{currentPrice?.toFixed(2) ?? '—'}</span>

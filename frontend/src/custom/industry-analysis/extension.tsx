@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
@@ -691,7 +692,7 @@ function PulseList({
                     return stock ? (
                       <span key={stock.symbol} title={stock.name || stock.symbol} onClick={e => { e.stopPropagation(); onStockClick(stock.symbol, stock.name || undefined, toNavItems(sortedStocks.slice(0, MAX_RENDERED_STOCKS))) }} className={cn('flex min-w-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] cursor-pointer hover:brightness-125', i === 0 ? 'bg-amber-300/10 text-foreground' : 'bg-elevated/60 text-secondary', stock.symbol === activeSymbol && 'ring-1 ring-accent/60')}>
                         <span className="flex min-w-0 items-center gap-1">
-                          <span className="min-w-0 truncate font-medium">{stock.name || stock.symbol}</span>
+                          <span className="min-w-0"><span className="block truncate font-medium">{stock.name || stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
                         </span>
                         <span className={cn('shrink-0 font-mono', priceColorClass(stock.change_pct))}>{stock.change_pct != null ? fmtPct(stock.change_pct) : '—'}</span>
                       </span>
@@ -827,7 +828,7 @@ function IndustryFocus({ stat, onStockClick, activeSymbol }: { stat: IndustrySta
                 <td className="px-4 py-2 font-mono text-muted">{idx + 1}</td>
                 <td className="px-4 py-2">
                   <div className="font-medium text-foreground">{s.name || '—'}</div>
-                  <div className="font-mono text-[10px] text-muted">{s.symbol}</div>
+                  <div className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><div className="font-mono text-[10px] text-muted">{s.symbol}</div><StockSectorTags symbol={s.symbol} /></div>
                 </td>
                 <td className={cn('px-4 py-2 font-mono tabular-nums', priceColorClass(s.change_pct))}>{s.change_pct != null ? fmtPct(s.change_pct) : '—'}</td>
                 <td className="px-4 py-2 font-mono text-foreground">{s.turnover_rate != null ? `${s.turnover_rate.toFixed(2)}%` : '—'}</td>
@@ -871,7 +872,7 @@ function LeaderStage({ stocks, onStockClick, activeSymbol }: { stocks: EnrichedS
             </div>
             <div className="mt-2 truncate text-sm font-medium text-foreground">{stock.name || stock.symbol}</div>
             <div className="mt-0.5 flex items-center justify-between text-[11px]">
-              <span className="font-mono text-muted">{stock.symbol}</span>
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-muted">{stock.symbol}</span><StockSectorTags symbol={stock.symbol} /></span>
               <span className={cn('font-mono', priceColorClass(stock.change_pct))}>{stock.change_pct != null ? fmtPct(stock.change_pct) : '—'}</span>
             </div>
           </div>

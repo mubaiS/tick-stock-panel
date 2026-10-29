@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState, useMemo, useEffect, useRef, useCallback, memo, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -472,6 +473,7 @@ function DailyTradeChip({ trade, side, strategyName, onClick, signalNames, activ
           </span>
         )}
       </span>
+      <StockSectorTags symbol={trade.symbol} />
       {isBuy ? (
         <>
           <span className="flex items-center justify-between gap-2">
@@ -896,7 +898,7 @@ function StockPoolPicker({ value, onChange, assetType = 'stock' }: { value: stri
                     type="button"
                     disabled={added}
                     onClick={() => addSymbol(r.symbol, r.name)}
-                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${added ? 'cursor-default text-muted' : 'text-foreground hover:bg-elevated'}`}
+                    className={`flex w-full flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 text-left text-xs transition-colors ${added ? 'cursor-default text-muted' : 'text-foreground hover:bg-elevated'}`}
                   >
                     <span className="w-[78px] shrink-0 font-mono">{r.symbol}</span>
                     <span className="min-w-0 flex-1 truncate text-secondary">{r.name}</span>
@@ -907,6 +909,7 @@ function StockPoolPicker({ value, onChange, assetType = 'stock' }: { value: stri
                       )
                     })()}
                     <Plus className={`h-3.5 w-3.5 ${added ? 'opacity-30' : 'text-accent'}`} />
+                    <StockSectorTags symbol={r.symbol} assetType={assetType} className="basis-full" />
                   </button>
                 )
               })}
@@ -953,12 +956,13 @@ function StockPoolPicker({ value, onChange, assetType = 'stock' }: { value: stri
         ) : symbols.map(symbol => {
           const name = symbolNames[symbol]
           return (
-          <span key={symbol} className="inline-flex items-center gap-1 rounded-btn border border-accent/30 bg-accent/10 px-2 py-1 text-[10px] text-accent">
+          <span key={symbol} className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-btn border border-accent/30 bg-accent/10 px-2 py-1 text-[10px] text-accent">
             <span className="font-mono">{symbol}</span>
             {name && <span className="max-w-[7rem] truncate text-accent/80">{name}</span>}
             <button type="button" onClick={() => removeSymbol(symbol)} className="text-accent/70 hover:text-accent">
               <X className="h-3 w-3" />
             </button>
+            <StockSectorTags symbol={symbol} assetType={assetType} className="basis-full" />
           </span>
           )
         })}
@@ -2732,7 +2736,7 @@ export function StrategyBacktest({ loadCandidate, onLoadConsumed }: {
                               <div className="font-medium text-foreground transition-colors group-hover:text-accent">
                                 {t.name || t.symbol}
                               </div>
-                              <div className="mt-0.5 font-mono text-[11px] text-muted">{t.symbol}</div>
+                              <div className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><div className="mt-0.5 font-mono text-[11px] text-muted">{t.symbol}</div><StockSectorTags symbol={t.symbol} /></div>
                             </td>
                             <td className="px-4 py-2.5">
                               <TradeLegCell trade={t} side="buy" signalNames={signalNames} />
@@ -2841,7 +2845,7 @@ export function StrategyBacktest({ loadCandidate, onLoadConsumed }: {
                             <div className="font-medium text-foreground transition-colors group-hover:text-accent">
                               {symbolNames[r.symbol] || r.symbol}
                             </div>
-                            <div className="mt-0.5 font-mono text-[11px] text-muted">{r.symbol}</div>
+                            <div className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><div className="mt-0.5 font-mono text-[11px] text-muted">{r.symbol}</div><StockSectorTags symbol={r.symbol} /></div>
                           </td>
                           <td className="px-4 py-2 text-right num">{r.n_trades}</td>
                           <td className={`px-4 py-2 text-right num ${priceColorClass(r.total_return)}`}>

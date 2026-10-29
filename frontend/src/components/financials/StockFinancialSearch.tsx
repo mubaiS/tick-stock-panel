@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -113,7 +114,7 @@ export function StockFinancialSearch({ onSelect, assetTypes }: Props) {
                   key={r.symbol}
                   type="button"
                   onClick={() => handleSelect(r)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100 ${
+                  className={`w-full flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-left transition-colors duration-100 ${
                     i === activeIdx ? 'bg-accent/10 text-accent' : 'hover:bg-elevated text-foreground'
                   }`}
                 >
@@ -129,6 +130,7 @@ export function StockFinancialSearch({ onSelect, assetTypes }: Props) {
                     <span className="shrink-0 px-1 py-0.5 rounded text-[10px] leading-none bg-sky-500/10 text-sky-400">指数</span>
                   )}
                   {r.code && <span className="text-[10px] text-muted font-mono shrink-0">{r.code}</span>}
+                  <StockSectorTags symbol={r.symbol} assetType={r.asset_type} className="basis-full" />
                 </button>
               ))
             )}

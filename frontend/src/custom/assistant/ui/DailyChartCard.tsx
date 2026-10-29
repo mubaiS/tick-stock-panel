@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * 走势小卡 — 纯 SVG 零依赖, 支持日K蜡烛(daily_kline)与当日分时(intraday)。
  *
@@ -22,6 +23,7 @@ function titleOf(chart: AssistantChart): ReactNode {
   return (
     <>
       {chart.name || chart.symbol}
+      <StockSectorTags symbol={chart.symbol} />
       {chart.name ? <span className="ml-1.5 font-mono text-muted">{chart.symbol}</span> : null}
       <span className="ml-1.5 text-muted">· {chart.kind === 'daily_kline' ? '日K' : '分时'}</span>
     </>

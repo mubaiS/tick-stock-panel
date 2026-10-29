@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * 模拟盘 (虚拟账户) — 多账户对比主视图 + 行展开账户操作。
  *
@@ -440,6 +441,8 @@ function SetupCard({ accId, onDone, onCancel }: { accId: string; onDone: (create
 // 本组件只管交互与渲染; 模式对齐 Watchlist.StockSearchBox 一族搜索框。
 // ================================================================
 interface SuggestOption {
+  symbol?: string
+  assetType?: string
   /** 选中后写入输入框的值 (完整代码 / 策略 id) */
   value: string
   /** 主文本 (截断) */
@@ -597,6 +600,7 @@ function SuggestInput({
                     ))}
                     {opt.hint}
                   </div>
+                  {opt.symbol && <StockSectorTags symbol={opt.symbol} assetType={opt.assetType} />}
                   {(opt.desc || opt.value !== opt.label) && (
                     <div className="flex min-w-0 items-baseline gap-2">
                       {opt.desc && <span className="min-w-0 flex-1 truncate text-[10px] leading-4 text-muted">{opt.desc}</span>}
@@ -655,6 +659,8 @@ function OrderForm({ acc, holdings = [], onDone }: { acc: string; holdings?: Pap
     const b = boardTag(r.symbol)
     return {
       value: r.symbol,
+      symbol: r.symbol,
+      assetType: r.asset_type,
       label: r.name || r.code || r.symbol,
       left: r.symbol,
       hint: b ? <span className={cn('shrink-0 rounded border px-1 py-px text-[9px] leading-none', b.color)}>{b.label}</span> : null,
@@ -2281,7 +2287,7 @@ function AccountPanel({ acc, name, onDeleted }: { acc: string; name?: string; on
                     {holdings.map(h => (
                       <tr key={h.symbol} className="border-t border-border/50 transition-colors hover:bg-elevated/40">
                         <td className="py-1.5 font-sans">
-                          {h.symbol}
+                          {h.symbol}<StockSectorTags symbol={h.symbol} />
                           {symbolNames[h.symbol] && (
                             <span className="ml-1.5 text-[10px] text-muted">{symbolNames[h.symbol]}</span>
                           )}
@@ -2359,7 +2365,7 @@ function AccountPanel({ acc, name, onDeleted }: { acc: string; name?: string; on
                       <span className={cn('w-8 shrink-0 font-medium', o.side === 'buy' ? 'text-bull' : 'text-bear')}>
                         {o.side === 'buy' ? '买入' : '卖出'}
                       </span>
-                      <span className="w-24 shrink-0 font-mono">{o.symbol}</span>
+                      <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="w-24 shrink-0 font-mono">{o.symbol}</span><StockSectorTags symbol={o.symbol} /></span>
                       {symbolNames[o.symbol] && (
                         <span className="w-24 shrink-0 truncate text-[11px] text-muted" title={symbolNames[o.symbol]}>{symbolNames[o.symbol]}</span>
                       )}
@@ -2397,13 +2403,13 @@ function AccountPanel({ acc, name, onDeleted }: { acc: string; name?: string; on
                     <div key={`${f.seq}-${f.order_id ?? 'corp'}`} className="flex items-center gap-2 rounded-btn px-2 py-1.5 font-mono text-xs hover:bg-elevated/50">
                       <span className="w-14 shrink-0 text-muted">{f.date}</span>
                       {f.kind === 'corp_action' ? (
-                        <span className="text-accent">除权 ×{f.factor} ({f.symbol}: {f.qty_before} → )</span>
+                        <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-accent">除权 ×{f.factor} ({f.symbol}: {f.qty_before} → )</span><StockSectorTags symbol={f.symbol} /></span>
                       ) : (
                         <>
                           <span className={cn('w-8 shrink-0 font-sans font-medium', f.side === 'buy' ? 'text-bull' : 'text-bear')}>
                             {f.side === 'buy' ? '买入' : '卖出'}
                           </span>
-                          <span className="w-24 shrink-0">{f.symbol}</span>
+                          <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="w-24 shrink-0">{f.symbol}</span><StockSectorTags symbol={f.symbol} /></span>
                           {symbolNames[f.symbol] && (
                             <span className="w-24 shrink-0 truncate font-sans text-[11px] text-muted" title={symbolNames[f.symbol]}>{symbolNames[f.symbol]}</span>
                           )}
@@ -2436,7 +2442,7 @@ function AccountPanel({ acc, name, onDeleted }: { acc: string; name?: string; on
                         {rounds.map((rt, i) => (
                           <tr key={`${rt.symbol}-${rt.open_date}-${rt.close_date}-${i}`} className="border-t border-border/50 transition-colors hover:bg-elevated/40">
                             <td className="py-1.5 font-sans">
-                              {rt.symbol}
+                              {rt.symbol}<StockSectorTags symbol={rt.symbol} />
                               {symbolNames[rt.symbol] && <span className="ml-1.5 text-[10px] text-muted">{symbolNames[rt.symbol]}</span>}
                             </td>
                             <td className="py-1.5 text-right">{rt.qty}</td>

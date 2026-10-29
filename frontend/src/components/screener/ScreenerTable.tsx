@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * 策略结果表格。
  *
@@ -281,7 +282,7 @@ export function ScreenerTable({
               <button
                 type="button"
                 onClick={() => onPreview(r.symbol, r.name ?? '', toNavItems(rows))}
-                className={`flex items-center gap-2 text-left ${isExpired ? 'cursor-default' : ''}`}
+                className={`flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left ${isExpired ? 'cursor-default' : ''}`}
               >
                 {board ? (
                   <span className={`shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded text-[9px] font-bold leading-none border ${board.color}`}>
@@ -298,6 +299,7 @@ export function ScreenerTable({
                     {r.name}
                   </span>
                 )}
+                <StockSectorTags symbol={r.symbol} assetType={assetType} className="basis-full" />
               </button>
               {isExpired ? (
                 <span className="shrink-0 inline-flex items-center px-1.5 py-px rounded text-[9px] font-medium leading-tight bg-red-500/10 text-red-400/60 border border-red-500/15">

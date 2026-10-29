@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CalendarDays, TrendingUp, FileText, Wallet, Activity, Sparkles, AlertTriangle, Loader2, ChartPie } from 'lucide-react'
@@ -181,7 +182,7 @@ export function StockFinancialDetail({ symbol, name }: Props) {
       <div className="px-5 py-4 border-b border-border flex items-center gap-3 flex-wrap">
         <div className="flex items-baseline gap-2 min-w-0">
           <span className="text-lg font-semibold text-foreground">{name}</span>
-          <span className="text-xs font-mono text-muted">{symbol}</span>
+          <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="text-xs font-mono text-muted">{symbol}</span><StockSectorTags symbol={symbol} /></span>
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <button
@@ -300,7 +301,7 @@ export function StockFinancialDetail({ symbol, name }: Props) {
                   <h3 className="text-sm font-semibold text-foreground mb-1.5">该个股已有分析报告</h3>
                   <p className="text-xs text-secondary leading-relaxed">
                     <span className="font-medium text-foreground">{name}</span>
-                    <span className="font-mono text-muted"> {symbol}</span> 在
+                    <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-muted"> {symbol}</span><StockSectorTags symbol={symbol} /></span> 在
                     <span className="text-purple-300 font-medium"> {fmtReportTime(confirmReport.created_at)} </span>
                     已生成过 AI 财务分析报告。
                   </p>

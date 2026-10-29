@@ -1,3 +1,4 @@
+import { StockSectorTags } from '@/components/StockSectorTags'
 /**
  * 看板展示组件 — 从 pages/Dashboard.tsx 原样搬移, 行为与视觉不变。
  *
@@ -188,9 +189,9 @@ export function LadderMini({ limit }: { limit: OverviewMarket['limit'] }) {
             {showStocks && (
               <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 pl-[50px]">
                 {stocks.map(s => (
-                  <span key={s.symbol} className="inline-flex items-center gap-0.5 text-[9px] text-secondary">
+                  <span key={s.symbol} className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="inline-flex items-center gap-0.5 text-[9px] text-secondary">
                     {s.name || s.symbol}
-                  </span>
+                  </span><StockSectorTags symbol={s.symbol} /></span>
                 ))}
               </div>
             )}
@@ -233,7 +234,7 @@ export function StockList({ title, rows, mode, onStockClick, activeSymbol }: {
                   ) : null
                 })()}
               </div>
-              <span className="font-mono text-[9px] text-muted">{r.symbol}</span>
+              <span className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1"><span className="font-mono text-[9px] text-muted">{r.symbol}</span><StockSectorTags symbol={r.symbol} /></span>
             </div>
             <div className="text-right">
               {mode === 'amount' ? (
@@ -294,7 +295,7 @@ export function RankColumn({ title, rows, tone, onStockClick, onDimensionClick, 
               {r.name}
               {clickable && <span className="ml-1 text-[8px] text-muted/50">↗</span>}
             </div>
-            <div className="mt-0.5 flex items-center gap-1">
+            <div className="mt-0.5 flex flex-wrap items-center gap-1">
               <span className="shrink-0 font-mono text-[9px] text-muted">{r.count}只</span>
               <span className="text-muted">·</span>
               {r.leader?.symbol ? (
@@ -306,6 +307,7 @@ export function RankColumn({ title, rows, tone, onStockClick, onDimensionClick, 
               ) : (
                 <span className="truncate text-[10px] text-muted">{r.leader?.name ?? '—'}</span>
               )}
+              <StockSectorTags symbol={r.leader?.symbol} />
               {r.leader?.change_pct != null && (
                 <span className={`shrink-0 font-mono text-[9px] tabular-nums ${pctClass(r.leader.change_pct)}`}>
                   {fmtStockPct(r.leader.change_pct)}
@@ -444,6 +446,7 @@ export function MonitorWidget({ onStockClick, activeSymbol }: {
                   </span>
                 )}
               </div>
+              <StockSectorTags symbol={ev.symbol} className="mt-1" />
               {/* 第二行: 策略类型走新格式, 其他走旧格式 */}
               {isStrategy ? (
                 <>
