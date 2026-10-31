@@ -8,6 +8,7 @@ import { AlertToastContainer } from '@/components/AlertToast'
 import { StockSectorLabelsProvider } from '@/components/StockSectorTags'
 import { AiAnalysisHost } from '@/components/financials/AiAnalysisHost'
 import { AiReportBubble } from '@/components/financials/AiReportBubble'
+import { DailyDataHealthNotice } from '@/components/data/DailyDataHealthNotice'
 import { StockAnalysisHost } from '@/components/stock-analysis/StockAnalysisHost'
 import { StockAnalysisBubble } from '@/components/stock-analysis/StockAnalysisBubble'
 import {
@@ -21,7 +22,7 @@ import { useUpdateCheck } from '@/lib/updateCheck'
 import {
   useToggleRealtimeQuotes,
 } from '@/lib/useSharedMutations'
-import { QK } from '@/lib/queryKeys'
+import { QK, MINUTE_DATA_QUERY_PREFIXES } from '@/lib/queryKeys'
 import { setUiPref } from '@/lib/uiPrefs'
 import { getPageScale } from '@/lib/pageZoom'
 import { setKlineBatchLimits } from '@/lib/klineBatchLimits'
@@ -493,6 +494,17 @@ export function Layout() {
   }, [isDataSyncing])
 
   const qc = useQueryClient()
+  const latestDataJob = pipelineJobs?.jobs?.[0]
+  const refreshedMinuteJob = useRef<string | null>(null)
+  useEffect(() => {
+    if (!latestDataJob || !['succeeded', 'failed'].includes(latestDataJob.status)) return
+    if (latestDataJob.result?.minute_rows == null && !['sync_minute', 'extend_minute'].includes(latestDataJob.stage)) return
+    if (refreshedMinuteJob.current === latestDataJob.id) return
+    refreshedMinuteJob.current = latestDataJob.id
+    // 复用常驻的任务轮询, 离开数据页后补拉结束也会刷新; 取消/失败可能已写入部分数据。
+    qc.invalidateQueries({ predicate: q => MINUTE_DATA_QUERY_PREFIXES.has(String(q.queryKey[0])) })
+    qc.invalidateQueries({ queryKey: QK.dataStatus })
+  }, [latestDataJob?.id, latestDataJob?.status, qc])
   const navigate = useNavigate()
   const version = versionData?.version
   const realtimeEnabled = prefs?.realtime_quotes_enabled ?? false
@@ -1149,6 +1161,7 @@ export function Layout() {
             与服务连接已断开 · 正在重连
           </div>
         )}
+        <DailyDataHealthNotice />
         <Suspense
           fallback={
             <div className="flex items-center justify-center py-24">
